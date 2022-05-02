@@ -82,11 +82,12 @@ public class UserController {
 	}
 
 	@PostMapping("/Users/login")
-	public User login(HttpServletResponse response, @RequestParam("user") String username,
+	public ResponseEntity<User> login(HttpServletResponse response, @RequestParam("user") String username,
 			@RequestParam("password") String pwd) {
 
-		User userDataByNom = userRepository.findByNom(username.toLowerCase());
-		if (userDataByNom != null && userDataByNom.getPassword().equals(userService.getMd5(pwd))) {
+		User userDataByNom = userRepository.findByNom(username.toLowerCase().trim());
+		if (pwd.trim().length() > 0 && username.trim().length() > 0 && userDataByNom != null
+				&& userDataByNom.getPassword().equals(userService.getMd5(pwd.trim()))) {
 			// appel du service de création d'un cookie
 			userService.Authenticate(response);
 
@@ -96,9 +97,9 @@ public class UserController {
 			user.setEmail(userDataByNom.getEmail());
 			user.setPassword(userDataByNom.getPassword());
 			user.setRoles(userDataByNom.getRoles());
-			return user;
+			return new ResponseEntity<>(user, HttpStatus.OK);
 		} else
-			return null;
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@PostMapping("/Users/create")
