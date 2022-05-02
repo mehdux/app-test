@@ -108,20 +108,20 @@ public class UserController {
 		User userDataByEmail = userRepository.findByEmail(user.getEmail().toLowerCase());
 
 		try {
-			if (!userService.PasswordValidator(user.password)) {
+			if (!userService.PasswordValidator(user.password.trim())) {
 				System.out.println("Le mot de passe ne respecte pas les normes indiquées!");
 				return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 			} else if (!user.password.trim().equals(user.confirm_password.trim())) {
 				System.out.println("Les mots de passes sont incorrects");
 				return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 				// si l'email est incorrect
-			} else if (!userService.isEmailValid(user.getEmail().toLowerCase())) {
+			} else if (!userService.isEmailValid(user.getEmail().toLowerCase().trim())) {
 				System.out.println("Format de l'email incorrect!");
-				return new ResponseEntity<>(userDataByNom, HttpStatus.CONFLICT);
+				return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 				// si le user ou l'email existe déjà
 			} else if (userDataByNom != null || userDataByEmail != null) {
 				System.out.println("Ce user existe déjà!");
-				return new ResponseEntity<>(userDataByNom, HttpStatus.CONFLICT);
+				return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 			} else {
 				System.out.println("c'est bon!");
 				User uSer = userService.CreateUser(user);
@@ -139,13 +139,14 @@ public class UserController {
 		// tester si on est connecté
 		if (userService.isAuthenticate(request)) {
 			Optional<User> UserData = userRepository.findById(id);
-			User userDataByNom = userRepository.findByNom(user.getNom().toLowerCase());
-			User userDataByEmail = userRepository.findByEmail(user.getEmail().toLowerCase());
 
 			if (UserData.isPresent()) {
-				if (userDataByNom != null || userDataByEmail != null) {
-					System.out.println("Ce pseudo ou cet email existe déjà!");
-					return new ResponseEntity<>(userDataByNom, HttpStatus.CONFLICT);
+				if (!userService.isEmailValid(user.getEmail().toLowerCase().trim())) {
+					System.out.println("Format de l'email incorrect!");
+					return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+				} else if (!userService.PasswordValidator(user.getPassword().trim())) {
+					System.out.println("Le mot de passe ne respecte pas les normes indiquées!");
+					return new ResponseEntity<>(null, HttpStatus.CONFLICT);
 				} else {
 					User uSer = userService.UpdateUser(id, user);
 					return new ResponseEntity<>(uSer, HttpStatus.OK);

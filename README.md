@@ -23,6 +23,10 @@ Suite des eventuelles actions (jeu de test) de l'api :
 		"id_roles" : [4,2]
 	}
 	
+	info : pour le mot de passe faut une majuscule, un symbole, un chiffre et une tail de plus de 8 positions
+	
+	lors de la création d'un nouvel utilisateur il faut que le nom et l'email n'existent dans la base de données au préalable.
+	
 2) Pour la connexion :
 
 	http://localhost:8080/api/Users/login
@@ -45,11 +49,13 @@ Suite des eventuelles actions (jeu de test) de l'api :
 
 	http://localhost:8080/api/Users/3
 	
-    faut changer toutes les infos
-	
 6) Déconnexion (faut être connecté pour que ça marche) :
 
 	http://localhost:8080/api/Users/logout
+	
+7) Suppression d'un utilisateur (faut être connecté pour que ça marche) avec la méthode DELETE:
+
+	http://localhost:8080/api/Users
 	
 
 	

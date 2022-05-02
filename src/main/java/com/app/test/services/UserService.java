@@ -56,10 +56,14 @@ public class UserService {
 				Role role = roleRepository.findBySymbole(symRole);
 				roles.add(role);
 			}
+		
+		User userDataByNom = userRepository.findByNom(user.getNom().toLowerCase().trim());
+		User userDataByEmail = userRepository.findByEmail(user.getEmail().toLowerCase().trim());
+		
 		User _User = UserData.get();
-		_User.setNom(user.getNom().toLowerCase());
-		_User.setEmail(user.getEmail().toLowerCase());
-		_User.setPassword(getMd5(user.getPassword()));
+		_User.setNom(userDataByNom == null && user.getNom().trim().length() > 0 ? user.getNom().trim().toLowerCase() : _User.getNom());
+		_User.setEmail(userDataByEmail == null && user.getEmail().trim().length() > 0 ? user.getEmail().trim().toLowerCase() : _User.getEmail());
+		_User.setPassword(user.getPassword().trim().length() > 0 ? getMd5(user.getPassword().trim()) : _User.getPassword());
 		_User.setRoles(roles);
 		User uSer = userRepository.save(_User);
 		return uSer;
